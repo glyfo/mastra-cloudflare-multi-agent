@@ -1,7 +1,8 @@
 // support-agent.ts
-import { Agent } from '@mastra/core';
+import { Agent, createTool } from '@mastra/core';
 import type { Context } from 'hono';
 import { workersAIModelFactory } from '@providers/workersai';
+import { z } from 'zod';
 
 export function makeCopyWriterAgent(c: Context) {
 	// Pull env off Hono context (Workers style)
@@ -12,12 +13,39 @@ export function makeCopyWriterAgent(c: Context) {
 
 	// Instantiate the agent
 	const agent = new Agent({
-		name: 'wonka-agent',
-		description: 'Willy Wonka—whimsical, kind, candy-themed (text only).',
-		instructions:
-			'Write as Willy Wonka: whimsical, kind, candy-themed. Keep it to 1–3 sentences, family-friendly, and include one light confectionery metaphor. Stay in character; no voice cues or stage directions.',
+		name: 'Copywriter',
+		description: 'You are a copywriter agent that writes blog post copy.',
+		instructions: 'You are a copywriter agent that writes blog post copy.',
 		model,
 	});
 
 	return agent;
+}
+
+/**
+ * Creates a tool that wraps the copywriter agent
+ * @param c - Hono context containing env bindings
+ * @returns Copywriter tool for use in other agents
+ */
+export function createCopywriterTool(c: Context<{ Bindings: Env }>) {
+	// Create the agent instance
+	const copywriterAgent = createCopywriterAgent(c);
+
+	return createTool({
+		id: 'copywriter-agent',
+		description: 'Calls the copywriter agent to write blog post copy.',
+		inputSchema: z.object({
+			topic: z.string().describe('Blog post topic'),
+		}),
+		outputSchema: z.object({
+			copy: z.string().describe('Blog post copy'),
+		}),
+		execute: async ({ context }) => {
+			const result = await copywriterAgent.generate(`Create a blog post about ${context.topic}`);
+			console.log('Copywriter result:', result.text);
+			return {
+				copy: result.text,
+			};
+		},
+	});
 }
