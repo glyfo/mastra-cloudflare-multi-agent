@@ -4,7 +4,7 @@ import type { Context } from 'hono';
 import { workersAIModelFactory } from '@providers/workersai';
 import { z } from 'zod';
 
-export function makeCopyWriterAgent(c: Context) {
+export function createCopywriterAgent(c: Context) {
 	// Pull env off Hono context (Workers style)
 	const env = (c as any)?.env ?? {};
 
@@ -27,7 +27,7 @@ export function makeCopyWriterAgent(c: Context) {
  * @param c - Hono context containing env bindings
  * @returns Copywriter tool for use in other agents
  */
-export function createCopywriterTool(c: Context<{ Bindings: Env }>) {
+export function createCopywriterTool(c: Context) {
 	// Create the agent instance
 	const copywriterAgent = createCopywriterAgent(c);
 
