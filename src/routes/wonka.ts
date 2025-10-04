@@ -1,11 +1,11 @@
 import type { Context } from 'hono';
-import {} from '@types/mastra/agents/copywriterAgent';
+import { makeCopyWriterAgent } from '@agents/copywriterAgent';
 
 export async function wonka(c: Context) {
 	const body = await c.req.json().catch(() => ({} as { message?: string }));
 	const message = body.message ?? 'Hello, who are you?';
 
-	const agent = makeWonkaAgent(c);
+	const agent = makeCopyWriterAgent(c);
 
 	try {
 		const reply = await agent.generateVNext(message);
