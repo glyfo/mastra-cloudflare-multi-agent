@@ -8,7 +8,7 @@ export async function publisher(c: Context) {
 	const agent = createPublisherAgent(c);
 
 	try {
-		const reply = await agent.generateVNext(message);
+		const reply = await agent.generate(message);
 		return c.json({ reply, message });
 	} catch (err: any) {
 		return c.json({ error: err?.message ?? 'Publisher is sleeping' }, 500);
