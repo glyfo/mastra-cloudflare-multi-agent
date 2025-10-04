@@ -8,7 +8,7 @@ export function workersAIModelFactory(env: Env) {
 
 	// Mastra expects: ({ runtimeContext, mastra }) => Model
 	return function _mastraModel(_args: { runtimeContext: unknown; mastra?: unknown }) {
-		return workersai('@cf/meta/llama-3.2-3b-instruct', {
+		return workersai('@hf/nousresearch/hermes-2-pro-mistral-7b', {
 			safePrompt: true,
 		});
 	};
