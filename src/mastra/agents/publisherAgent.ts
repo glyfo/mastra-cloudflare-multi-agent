@@ -6,7 +6,7 @@ import { createCopywriterAgent } from '@agents/copywriterAgent';
 import { createEditorAgent } from '@agents/editorAgent';
 import { z } from 'zod';
 
-export function publisherAgent(c: Context) {
+export function createpublisherAgent(c: Context) {
 	// Pull env off Hono context (Workers style)
 	const env = (c as any)?.env ?? {};
 

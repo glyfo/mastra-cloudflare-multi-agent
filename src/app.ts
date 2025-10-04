@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { health } from '@routes/health';
-import { wonka } from '@routes/wonka';
+import { publisher } from '@routes/publisher';
 import type { AppCtx } from './type';
 
 const app = new Hono<AppCtx>();
@@ -12,6 +12,6 @@ app.use('*', async (c, next) => {
 });
 
 app.post('/health', health);
-app.post('/wonka', wonka);
+app.post('/publisher', publisher);
 
 export default app;
