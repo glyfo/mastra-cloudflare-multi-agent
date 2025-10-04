@@ -19,7 +19,7 @@ export function createPublisherAgent(c: Context) {
 
 	// Convert agents to tools
 	const copywriterTool = createTool({
-		id: 'copywriter-agent',
+		id: 'copywriterTool',
 		description: 'Calls the copywriter agent to write blog post copy about a specific topic.',
 		inputSchema: z.object({
 			topic: z.string().describe('Blog post topic'),
@@ -36,7 +36,7 @@ export function createPublisherAgent(c: Context) {
 	});
 
 	const editorTool = createTool({
-		id: 'editor-agent',
+		id: 'editorTool',
 		description: 'Calls the editor agent to edit blog post copy.',
 		inputSchema: z.object({
 			copy: z.string().describe('Blog post copy to edit'),
