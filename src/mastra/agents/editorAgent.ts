@@ -3,7 +3,7 @@ import { Agent } from '@mastra/core';
 import type { Context } from 'hono';
 import { workersAIModelFactory } from '@providers/workersai';
 
-export function createCopywriterAgent(c: Context) {
+export function createEditorAgent(c: Context) {
 	// Pull env off Hono context (Workers style)
 	const env = (c as any)?.env ?? {};
 
@@ -12,9 +12,9 @@ export function createCopywriterAgent(c: Context) {
 
 	// Instantiate the agent
 	const agent = new Agent({
-		name: 'Copywriter',
-		description: 'You are a copywriter agent that writes blog post copy.',
-		instructions: 'You are a copywriter agent that writes blog post copy.',
+		name: 'Editor',
+		description: 'You are an editor agent that edits blog post copy.',
+		instructions: 'You are an editor agent that edits blog post copy.',
 		model,
 	});
 
