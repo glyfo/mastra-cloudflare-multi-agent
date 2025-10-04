@@ -3,7 +3,7 @@ import { Agent } from '@mastra/core';
 import type { Context } from 'hono';
 import { makeWorkersAI } from '@providers/workersai';
 
-export function makeWonkaAgent(c: Context) {
+export function makeCopyWriterAgent(c: Context) {
 	// Pull env off Hono context (Workers style)
 	const env = (c as any)?.env ?? {};
 

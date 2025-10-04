@@ -1,5 +1,5 @@
 import type { Context } from 'hono';
-import { makeWonkaAgent } from '@agents/wonka-agent';
+import { makeWonkaAgent } from '@types/mastra/agents/copywriterAgent';
 
 export async function wonka(c: Context) {
 	const body = await c.req.json().catch(() => ({} as { message?: string }));

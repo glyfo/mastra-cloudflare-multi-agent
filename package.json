@@ -1,5 +1,5 @@
 {
-	"name": "mastra-hono-hello-world",
+	"name": "mastra-cloudflare-multi-agent",
 	"version": "1.0.0",
 	"description": "Hello World app using Mastra, Cloudflare AI Gateway, and Hono",
 	"main": "index.ts",
