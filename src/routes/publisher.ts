@@ -1,11 +1,11 @@
 import type { Context } from 'hono';
-import { createpublisherAgent } from '@agents/publisherAgent';
+import { createPublisherAgent } from '@agents/publisherAgent';
 
 export async function publisher(c: Context) {
 	const body = await c.req.json().catch(() => ({} as { message?: string }));
 	const message = body.message ?? 'Write a blog post about React JavaScript frameworks. Only return the final edited copy.';
 
-	const agent = createpublisherAgent(c);
+	const agent = createPublisherAgent(c);
 
 	try {
 		const reply = await agent.generateVNext(message);
