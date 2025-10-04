@@ -1,0 +1,50 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@types/*": ["src/*"],
+			"@routes/*": ["src/routes/*"],
+			"@agents/*": ["src/mastra/agents/*"],
+			"@providers/*": ["src/mastra/providers/*"],
+			"@utils/*": ["src/mastra/utils/*"]
+		},
+
+		"target": "ES2022",
+		"lib": ["ES2022", "WebWorker"],
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+
+		"jsx": "react-jsx",
+		"jsxImportSource": "react",
+
+		"types": ["@cloudflare/workers-types", "@types/react"],
+
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"useUnknownInCatchVariables": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": false,
+		"forceConsistentCasingInFileNames": true,
+
+		"allowJs": true,
+		"checkJs": false,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+
+		"skipLibCheck": true,
+
+		"removeComments": true,
+		"exactOptionalPropertyTypes": true,
+		"noUncheckedIndexedAccess": false
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist", ".wrangler", "wrangler.toml"]
+}

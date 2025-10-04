@@ -1,0 +1,25 @@
+# wrangler.toml
+name = "mastra-hono-hello-world"
+main = "src/app.ts"
+compatibility_date = "2025-09-27"
+compatibility_flags = ["nodejs_compat"]
+
+[ai]
+binding = "AI"  
+remote = true 
+
+[[d1_databases]]
+binding = "mastra_db"
+database_name = "mastra-db"
+database_id = "d6584a88-7cd7-479f-ba11-76b524ab9e86"
+
+
+# Observability configuration
+[observability]
+enabled = true
+# Optional: specify head sampling rate (0.0 to 1.0)
+head_sampling_rate = 1.0
+
+[vars]
+LOG_LEVEL="debug"
+DEBUG="*"

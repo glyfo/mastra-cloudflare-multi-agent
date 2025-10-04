@@ -1,0 +1,32 @@
+{
+	"name": "mastra-hono-hello-world",
+	"version": "1.0.0",
+	"description": "Hello World app using Mastra, Cloudflare AI Gateway, and Hono",
+	"main": "index.ts",
+	"scripts": {
+		"database": "pnpm exec wrangler d1 create mastra-db",
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"tail": "pnpm exec wrangler tail"
+	},
+	"dependencies": {
+		"@ai-sdk/openai": "^2.0.42",
+		"@mastra/core": "^0.19.1",
+		"@mastra/deployer-cloudflare": "^0.14.4",
+		"ai": "^5.0.59",
+		"hono": "^4.9.9",
+		"workers-ai-provider": "^2.0.0"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.9.8",
+		"@cloudflare/workers-types": "^4.20251001.0",
+		"@types/node": "^24.6.2",
+		"@types/react": "^19.2.0",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.9.3",
+		"vitest": "^3.2.4",
+		"wrangler": "^4.40.3"
+	}
+}
