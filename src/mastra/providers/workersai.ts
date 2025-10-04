@@ -3,7 +3,7 @@ import { createWorkersAI } from 'workers-ai-provider';
 
 type Env = { AI: Ai };
 
-export function makeWorkersAI(env: Env) {
+export function workersAIModelFactory(env: Env) {
 	const workersai = createWorkersAI({ binding: env.AI });
 
 	// Mastra expects: ({ runtimeContext, mastra }) => Model

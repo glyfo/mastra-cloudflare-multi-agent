@@ -1,14 +1,14 @@
 // support-agent.ts
 import { Agent } from '@mastra/core';
 import type { Context } from 'hono';
-import { makeWorkersAI } from '@providers/workersai';
+import { workersAIModelFactory } from '@providers/workersai';
 
 export function makeCopyWriterAgent(c: Context) {
 	// Pull env off Hono context (Workers style)
 	const env = (c as any)?.env ?? {};
 
 	// Create the model via your LLM provider
-	const model = makeWorkersAI(env);
+	const model = workersAIModelFactory(env);
 
 	// Instantiate the agent
 	const agent = new Agent({
