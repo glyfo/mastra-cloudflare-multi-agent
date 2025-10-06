@@ -1,152 +1,122 @@
-# 🍫 Mastra Worker Hello World
+# Mastra + Cloudflare Workers — Multi-Agent Example
 
-This project demonstrates how to build and deploy an **AI-powered Worker** on Cloudflare using [Mastra](https://github.com/glyfo/mastra), [AI SDK v5](https://sdk.vercel.ai/docs), and [Workers AI].
+This repository is a small example showing how to wire Mastra agents into a Cloudflare Worker using the `workers-ai-provider` and `hono` for routing. It demonstrates a small multi-agent workflow with three agents that collaborate to produce polished blog copy.
 
-## 🚀 Features
+## Highlights
 
-- ⚡️ Cloudflare Workers runtime
-- 🤖 Agent framework powered by `@mastra/core`
-- 🎩 **Wonka Agent** – a whimsical, candy-themed AI personality
-- 🌐 REST-style routes using `hono`
+- Cloudflare Workers runtime (Wrangler)
+- Agent pattern using `@mastra/core`
+- `workers-ai-provider` for model integration (configured to use a Mistral model by default)
+-- Simple REST routes with `hono` (health + publisher endpoint)
 
----
-
-## 📂 Project Structure
+## Project layout (key files)
 
 ```
 src/
  ├─ mastra/
  │   ├─ agents/
- │   │   └─ wonka-agent.ts   # Defines Willy Wonka agent
- │   └─ providers/           # Workers AI provider
+ │   │   ├─ copywriterAgent.ts   # Copywriter agent factory (writes blog copy)
+ │   │   ├─ editorAgent.ts       # Editor agent factory (edits blog copy)
+ │   │   └─ publisherAgent.ts    # Publisher agent (coordinates tools/agents)
+ │   └─ providers/
+ │       └─ workersai.ts         # Worker AI model factory
  ├─ routes/
- │   ├─ health.ts            # Health check route
- │   └─ wonka.ts             # Wonka API route
- ├─ app.ts                   # Hono app entry
- └─ index.ts                 # Worker entry
+ │   ├─ health.ts                # Health check route
+ │   └─ publisher.ts             # /publisher route that calls the publisher agent
+ ├─ app.ts                       # Hono app wiring
+ └─ index.ts                     # Worker entry (bindings)
 ```
 
----
+## Requirements
 
-## 🧑‍💻 Installation
+- Node.js (LTS recommended)
+- pnpm (used for scripts in this project)
+- Wrangler (Cloudflare CLI) for local development and deploy
+
+## Install
 
 ```bash
 pnpm install
 ```
 
-Environment variables are defined in `.dev.vars` and bound automatically with Wrangler.
+## Environment
 
----
+This project expects a Workers binding named `AI` which points to the Cloudflare AI Gateway or model binding. Typical environment variables / bindings you will want to set in your Wrangler configuration or Cloudflare dashboard:
 
-## 🔑 Environment Variables
+- AI (Workers AI binding) — required. Example binding name: `AI`.
+- CLOUDFLARE_ACCOUNT_ID — optional for some Wrangler commands.
 
-| Variable                | Description               |
-| ----------------------- | ------------------------- |
-| `OPENAI_API_KEY`        | OpenAI key for LLM access |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID     |
-| `CLOUDFLARE_API_TOKEN`  | Cloudflare API token      |
-| `CLOUDFLARE_GATEWAY_ID` | Cloudflare AI Gateway ID  |
-| `AI`                    | Workers AI binding        |
+Note: `src/mastra/providers/workersai.ts` uses the `AI` binding and returns a model handle for `@hf/nousresearch/hermes-2-pro-mistral-7b` by default. Change the model id or options there if you need a different model.
 
----
+## Scripts
 
-## 🎩 Wonka Agent
+From `package.json`:
 
-The Wonka Agent is a playful AI personality:
+- pnpm dev — run `wrangler dev` (local dev server)
+- pnpm deploy — run `wrangler deploy` (publish)
+- pnpm test — run `vitest`
+- pnpm tail — `wrangler tail`
 
-```ts
-const agent = new Agent({
-	name: 'wonka-agent',
-	description: 'Willy Wonka—whimsical, kind, candy-themed (text only).',
-	instructions:
-		'Write as Willy Wonka: whimsical, kind, candy-themed. Keep it to 1–3 sentences, family-friendly, and include one light confectionery metaphor.',
-	model,
-});
+## Routes
+
+Health check
+
 ```
-
----
-
-## 🌐 Routes
-
-### Health
-
-```http
 GET /health
 ```
 
-Returns service status.
+Publisher (multi-agent workflow)
 
-### Wonka
-
-```http
-POST /wonka
+```
+POST /publisher
 Content-Type: application/json
 
 {
-  "message": "Tell me a secret"
+	"message": "Write a blog post about React JavaScript frameworks. Only return the final edited copy."
 }
 ```
 
-✅ Response:
+What happens
+
+- `publisher` creates a Publisher agent that has two tools: `copywriterTool` and `editorTool`.
+- Internally the Publisher agent calls the Copywriter agent (via `copywriterTool`) to generate a draft, then calls the Editor agent (via `editorTool`) to edit/refine the draft, and finally returns the edited copy.
+
+Response (example):
 
 ```json
 {
-	"reply": "Ah, a secret! Like a truffle hidden in golden foil, some wonders are sweeter when unwrapped with patience.",
-	"message": "Tell me a secret"
+	"reply": "<final edited blog post copy>",
+	"message": "Write a blog post about React JavaScript frameworks. Only return the final edited copy."
 }
 ```
 
----
+## Provider details
 
-## 📦 Dependencies
+The model factory is in `src/mastra/providers/workersai.ts` which uses `workers-ai-provider`:
 
-```json
-"dependencies": {
-  "@ai-sdk/openai": "^2.0.42",
-  "@mastra/core": "^0.19.1",
-  "@mastra/deployer-cloudflare": "^0.14.4",
-  "ai": "^5.0.59",
-  "ai-gateway-provider": "^2.0.0",
-  "hono": "^4.9.9",
-  "workers-ai-provider": "^2.0.0"
-}
-```
+- It expects to be passed the Worker binding `AI` (via Hono context env: `c.env.AI`).
+- The factory currently returns `workersai('@hf/nousresearch/hermes-2-pro-mistral-7b', { safePrompt: true })`.
 
----
+If you need to use a different provider or model, update that file.
 
-## 🛠 Development
+## Development tips
 
-Start local dev server:
+- Start local dev: `pnpm dev` (this runs `wrangler dev`)
+- Test the route locally with curl or an HTTP client against the dev server (default port 8787)
+
+Example curl (publisher):
 
 ```bash
-pnpm dev
+curl -X POST http://localhost:8787/publisher \
+	-H "Content-Type: application/json" \
+	-d '{"message":"Write a blog post about React JavaScript frameworks. Only return the final edited copy."}'
 ```
 
-Access routes:
+## Troubleshooting
 
-- `http://localhost:8787/health`
-- `http://localhost:8787/wonka`
+ - If you see errors about unsupported providers like `workersai.chat`, switch to the direct `workersai` binding or configure a supported provider.
+ - Ensure your Worker `AI` binding is present in `wrangler.toml` or your Cloudflare dashboard.
 
----
+## License
 
-## ☁️ Deployment
-
-Deploy with Wrangler:
-
-```bash
-pnpm wrangler deploy
-```
-
----
-
-## ⚠️ Known Issues
-
-- **Workers AI Gateway limitation**  
-  If you see the following error:
-
-  ```
-  Sorry, but provider "workersai.chat" is currently not supported. Please open an issue.
-  ```
-
-  This happens when trying to use the **AI Gateway** with `workersai.chat`.  
-  ✅ Workaround: Use `workersai` directly instead of `workersai.chat`, or configure a different supported provider.
+MIT
